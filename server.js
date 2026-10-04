@@ -5,7 +5,7 @@ const path = require('path');
 const db = require('./database');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;   // ← MUDANÇA AQUI
 const ADMIN_PASSWORD = 'qzz-admin-2025'; // TROQUE ISSO!
 
 app.use(cors());
@@ -181,6 +181,6 @@ app.get('/api/admin/stats', authAdmin, (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ API rodando em http://localhost:${PORT}`);
-  console.log(`🔑 Painel admin: abra http://localhost:${PORT} no navegador`);
+  console.log(`✅ API rodando na porta ${PORT}`);
+  console.log(`🔑 Painel admin: http://localhost:${PORT}`);
 });
