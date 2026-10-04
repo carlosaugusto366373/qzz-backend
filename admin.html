@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QZZ Admin • Gerador de Keys</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+  body { background:#0a0000; color:#eee; min-height:100vh; padding:20px; }
+  .wrap { max-width:1000px; margin:0 auto; }
+  h1 { color:#ff0044; text-align:center; margin-bottom:6px; text-shadow:0 0 20px #ff0044; }
+  .sub { text-align:center; color:#b08080; margin-bottom:24px; font-size:13px; letter-spacing:2px; }
+  .card { background:#140808; border:1px solid #3a1a1a; border-radius:16px; padding:20px; margin-bottom:16px; }
+  .card h2 { color:#ff0044; font-size:16px; margin-bottom:12px; }
+  input, select, textarea { background:#0a0505; border:1px solid #3a2a2a; color:#eee; padding:10px; border-radius:10px; width:100%; outline:none; margin-bottom:10px; }
+  input:focus { border-color:#ff0044; }
+  button { background:linear-gradient(135deg,#ff0044,#cc0033); border:none; color:#1a0000; padding:10px 18px; border-radius:10px; font-weight:800; cursor:pointer; transition:.2s; }
+  button:hover { transform:scale(1.03); box-shadow:0 0 20px #ff004466; }
+  button.ghost { background:transparent; border:1px solid #3a2a2a; color:#b08080; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .stat { background:#0a0505; border:1px solid #2a1a1a; border-radius:12px; padding:14px; text-align:center; }
+  .stat .n { font-size:24px; font-weight:900; color:#ff0044; }
+  .stat .l { font-size:11px; color:#b08080; text-transform:uppercase; letter-spacing:1px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th, td { padding:8px; text-align:left; border-bottom:1px solid #2a1a1a; }
+  th { color:#ff0044; font-size:10px; text-transform:uppercase; }
+  .key-cell { font-family:monospace; color:#ff8888; cursor:pointer; }
+  .ok { color:#44ff88; } .bad { color:#ff5555; }
+  .actions button { padding:5px 10px; font-size:11px; margin:2px; }
+  .output { background:#0a0505; border:1px dashed #ff0044; border-radius:10px; padding:12px; margin-top:10px; font-family:monospace; font-size:12px; white-space:pre-wrap; max-height:200px; overflow:auto; display:none; }
+  .err { background:#2a0000; border:1px solid #ff0044; color:#ff8888; padding:10px; border-radius:10px; margin-bottom:12px; font-size:13px; display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>QZZ ADMIN</h1>
+  <div class="sub">GERADOR DE KEYS • PAYPAL PREMIUM</div>
+
+  <div class="err" id="errBox"></div>
+
+  <!-- LOGIN ADMIN -->
+  <div class="card" id="loginBox">
+    <h2>🔒 Acesso Admin</h2>
+    <input type="password" id="adminPass" placeholder="Senha do admin" onkeydown="if(event.key==='Enter') login()">
+    <button onclick="login()">Entrar</button>
+  </div>
+
+  <!-- PAINEL -->
+  <div id="panel" style="display:none">
+
+    <div class="grid" id="stats"></div>
+
+    <div class="card">
+      <h2>🔑 Gerar Keys</h2>
+      <div class="grid">
+        <input type="number" id="days" value="30" placeholder="Dias">
+        <input type="number" id="qty" value="1" placeholder="Quantidade">
+        <input type="text" id="note" placeholder="Nota (opcional)">
+      </div>
+      <button onclick="generate()">Gerar</button>
+      <div class="output" id="output"></div>
+    </div>
+
+    <div class="card">
+      <h2>📋 Keys</h2>
+      <button class="ghost" onclick="loadKeys()">Atualizar</button>
+      <div style="overflow:auto; margin-top:10px;">
+        <table>
+          <thead><tr><th>Key</th><th>Status</th><th>Expira</th><th>HWID</th><th>Ações</th></tr></thead>
+          <tbody id="keysTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📜 Logs</h2>
+      <button class="ghost" onclick="loadLogs()">Atualizar</button>
+      <div style="overflow:auto; margin-top:10px; max-height:300px;">
+        <table>
+          <thead><tr><th>Data</th><th>Key</th><th>Ação</th><th>Detalhe</th></tr></thead>
+          <tbody id="logsTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== API na MESMA origem (o painel é servido pelo próprio Express) =====
+const API = window.location.origin;
+let pass = '';
+
+async function api(path, opts = {}) {
+  try {
+    const res = await fetch(API + path, {
+      ...opts,
+      headers: { 'Content-Type': 'application/json', 'x-admin-pass': pass, ...(opts.headers||{}) }
+    });
+    return await res.json();
+  } catch (e) {
+    showErr('Não foi possível conectar ao servidor. Verifique se o terminal está rodando com "npm start".');
+    throw e;
+  }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('errBox');
+  el.textContent = '⚠ ' + msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 6000);
+}
+
+function login() {
+  pass = document.getElementById('adminPass').value;
+  if (!pass) return alert('Digite a senha');
+  api('/api/admin/stats').then(r => {
+    if (!r.success) return alert('Senha incorreta');
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('panel').style.display = 'block';
+    refreshAll();
+  }).catch(() => {});
+}
+
+function refreshAll() { loadStats(); loadKeys(); loadLogs(); }
+
+async function loadStats() {
+  const r = await api('/api/admin/stats');
+  if (!r.success) return;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="n">${r.total}</div><div class="l">Total</div></div>
+    <div class="stat"><div class="n">${r.ativas}</div><div class="l">Ativas</div></div>
+    <div class="stat"><div class="n">${r.expiradas}</div><div class="l">Expiradas</div></div>
+    <div class="stat"><div class="n">${r.usadas}</div><div class="l">Ativadas</div></div>
+  `;
+}
+
+async function generate() {
+  const days = document.getElementById('days').value;
+  const quantity = document.getElementById('qty').value;
+  const note = document.getElementById('note').value;
+  const r = await api('/api/admin/generate', { method:'POST', body: JSON.stringify({ days, quantity, note }) });
+  if (!r.success) return alert(r.message);
+  const out = document.getElementById('output');
+  out.style.display = 'block';
+  out.textContent = r.keys.map(k => k.key).join('\n');
+  refreshAll();
+}
+
+async function loadKeys() {
+  const r = await api('/api/admin/keys');
+  if (!r.success) return;
+  const tbody = document.getElementById('keysTable');
+  tbody.innerHTML = r.keys.map(k => {
+    const exp = new Date(k.expires_at).toLocaleDateString('pt-BR');
+    const expired = Date.now() > k.expires_at;
+    const status = !k.active ? '<span class="bad">Desativada</span>' : expired ? '<span class="bad">Expirada</span>' : '<span class="ok">Ativa</span>';
+    return `<tr>
+      <td class="key-cell" onclick="copy('${k.key}')">${k.key}</td>
+      <td>${status}</td>
+      <td>${exp}</td>
+      <td style="font-size:10px;color:#6a5050">${k.hwid ? k.hwid.slice(0,12)+'...' : '—'}</td>
+      <td class="actions">
+        <button class="ghost" onclick="toggle('${k.key}')">${k.active?'Off':'On'}</button>
+        <button class="ghost" onclick="resetHwid('${k.key}')">Reset HWID</button>
+        <button class="ghost" onclick="del('${k.key}')">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function loadLogs() {
+  const r = await api('/api/admin/logs');
+  if (!r.success) return;
+  document.getElementById('logsTable').innerHTML = r.logs.map(l => `
+    <tr>
+      <td>${new Date(l.created_at).toLocaleString('pt-BR')}</td>
+      <td class="key-cell">${l.key||'—'}</td>
+      <td>${l.action}</td>
+      <td style="color:#6a5050">${l.detail||''}</td>
+    </tr>
+  `).join('');
+}
+
+async function toggle(key) { await api('/api/admin/toggle', { method:'POST', body: JSON.stringify({ key })}); loadKeys(); loadStats(); }
+async function resetHwid(key) { if(!confirm('Resetar HWID?')) return; await api('/api/admin/reset-hwid', { method:'POST', body: JSON.stringify({ key })}); loadKeys(); }
+async function del(key) { if(!confirm('Deletar key?')) return; await api('/api/admin/delete', { method:'POST', body: JSON.stringify({ key })}); loadKeys(); loadStats(); }
+function copy(t){ navigator.clipboard.writeText(t); }
+</script>
+</body>
+</html>
