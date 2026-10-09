@@ -44,7 +44,6 @@
 
   .wrap { max-width: 1100px; margin: 0 auto; }
 
-  /* ===== HEADER ===== */
   .header {
     border: 1px solid var(--line);
     background: var(--panel);
@@ -84,7 +83,6 @@
   .header .meta { color: var(--txt-3); font-size: 11px; }
   .header .meta b { color: var(--txt-2); font-weight: 500; }
 
-  /* ===== ERRO ===== */
   .err {
     background: #1a0808;
     border-left: 3px solid var(--red);
@@ -96,7 +94,6 @@
   }
   .err::before { content: '[!] '; color: var(--red); font-weight: 700; }
 
-  /* ===== CARD / SECTION ===== */
   .card {
     background: var(--panel);
     border: 1px solid var(--line);
@@ -129,7 +126,6 @@
 
   .card-body { padding: 16px; }
 
-  /* ===== LOGIN ===== */
   #loginBox { max-width: 380px; margin: 80px auto; }
   #loginBox .card-body { padding: 24px; }
 
@@ -141,7 +137,6 @@
 
   #loginBox .prompt::before { content: '> '; color: var(--green); }
 
-  /* ===== INPUTS ===== */
   input, select {
     background: #0d0d0d;
     border: 1px solid var(--line);
@@ -163,7 +158,6 @@
     background: #0f0a0a;
   }
 
-  /* ===== BUTTONS ===== */
   button {
     background: var(--red);
     border: 1px solid var(--red);
@@ -208,7 +202,6 @@
   button.ghost.red { border-color: #4a1e1e; color: #ff6666; }
   button.ghost.red:hover { background: #1f0f0f; border-color: var(--red); color: #ff6666; }
 
-  /* ===== GRID ===== */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -216,7 +209,6 @@
     margin-bottom: 12px;
   }
 
-  /* ===== STATS ===== */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -259,7 +251,6 @@
     margin-top: 6px;
   }
 
-  /* ===== TABLE ===== */
   .table-wrap { overflow-x: auto; }
 
   table {
@@ -334,7 +325,6 @@
     text-transform: none;
   }
 
-  /* ===== OUTPUT ===== */
   .output {
     background: #0a0a0a;
     border: 1px solid var(--line);
@@ -361,7 +351,6 @@
     font-size: 10px;
   }
 
-  /* ===== TOAST ===== */
   .toast {
     position: fixed;
     bottom: 20px;
@@ -386,7 +375,6 @@
   .toast.error { border-left-color: var(--red); }
   .toast::before { content: '> '; color: var(--txt-3); }
 
-  /* ===== EMPTY ===== */
   .empty {
     text-align: center;
     padding: 32px 16px;
@@ -396,7 +384,6 @@
 
   .empty::before { content: '// '; color: var(--txt-3); }
 
-  /* ===== FOOTER ===== */
   .footer {
     text-align: center;
     color: var(--txt-3);
@@ -408,7 +395,6 @@
   .footer::before { content: '─── '; color: var(--line-2); }
   .footer::after { content: ' ───'; color: var(--line-2); }
 
-  /* ===== PERIODO TABS ===== */
   .periodo-tabs {
     display: flex;
     gap: 6px;
@@ -441,7 +427,14 @@
     font-weight: 700;
   }
 
-  /* ===== RESPONSIVO ===== */
+  .section-label {
+    color: var(--txt-3);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
   @media (max-width: 700px) {
     body { padding: 12px 8px; font-size: 12px; }
     .header { padding: 10px 12px; }
@@ -465,7 +458,6 @@
     .periodo-tabs .tab { flex: 1; padding: 8px 6px; font-size: 10px; }
   }
 
-  /* ===== SCROLLBAR ===== */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: #0a0a0a; }
   ::-webkit-scrollbar-thumb { background: #2a2a2a; }
@@ -480,7 +472,7 @@
       <div class="dot"></div>
       <h1>QZZ<span>_admin</span></h1>
     </div>
-    <div class="meta">status: <b>online</b> • v1.1</div>
+    <div class="meta">status: <b>online</b> • v1.2</div>
   </div>
 
   <div class="err" id="errBox"></div>
@@ -500,7 +492,7 @@
   <!-- PAINEL -->
   <div id="panel" style="display:none">
 
-    <!-- SELETOR DE PERÍODO -->
+    <!-- SELETOR DE PERÍODO (filtro) -->
     <div class="card">
       <div class="card-head">
         <div class="title">período</div>
@@ -519,14 +511,23 @@
 
     <div class="stats-grid" id="stats"></div>
 
+    <!-- GERAR KEYS -->
     <div class="card">
       <div class="card-head">
         <div class="title">gerar keys</div>
         <button class="ghost" onclick="refreshAll()">↻ atualizar</button>
       </div>
       <div class="card-body">
+        <div style="margin-bottom:12px">
+          <div class="section-label">duração</div>
+          <div class="periodo-tabs" id="duracaoTabs">
+            <button class="tab active" data-dias="0.0416666667" onclick="setDuracao(this)">1 hora</button>
+            <button class="tab" data-dias="1" onclick="setDuracao(this)">1 dia</button>
+            <button class="tab" data-dias="7" onclick="setDuracao(this)">7 dias</button>
+            <button class="tab" data-dias="30" onclick="setDuracao(this)">30 dias</button>
+          </div>
+        </div>
         <div class="grid">
-          <input type="number" id="days" value="30" placeholder="dias" min="1">
           <input type="number" id="qty" value="1" placeholder="quantidade" min="1" max="100">
           <input type="text" id="note" placeholder="nota (opcional)">
         </div>
@@ -535,6 +536,7 @@
       </div>
     </div>
 
+    <!-- KEYS -->
     <div class="card">
       <div class="card-head">
         <div class="title">keys</div>
@@ -556,6 +558,7 @@
       </div>
     </div>
 
+    <!-- LOGS -->
     <div class="card">
       <div class="card-head">
         <div class="title">logs</div>
@@ -586,6 +589,7 @@
 const API = window.location.origin;
 let pass = '';
 let periodoAtual = '1h';
+let duracaoDias = 0.0416666667; // padrão: 1 hora
 
 const PERIODO_LABEL = {
   '1h': '1 hora',
@@ -645,6 +649,12 @@ function setPeriodo(btn) {
   refreshAll();
 }
 
+function setDuracao(btn) {
+  document.querySelectorAll('#duracaoTabs .tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  duracaoDias = parseFloat(btn.dataset.dias);
+}
+
 function refreshAll() { loadStats(); loadKeys(); loadLogs(); }
 
 async function loadStats() {
@@ -659,10 +669,12 @@ async function loadStats() {
 }
 
 async function generate() {
-  const days = document.getElementById('days').value;
   const quantity = document.getElementById('qty').value;
   const note = document.getElementById('note').value;
-  const r = await api('/api/admin/generate', { method:'POST', body: JSON.stringify({ days, quantity, note }) });
+  const r = await api('/api/admin/generate', {
+    method:'POST',
+    body: JSON.stringify({ days: duracaoDias, quantity, note })
+  });
   if (!r.success) return showToast(r.message || 'erro ao gerar', 'error');
   const out = document.getElementById('output');
   out.style.display = 'block';
@@ -681,11 +693,12 @@ async function loadKeys() {
     return;
   }
   tbody.innerHTML = r.keys.map(k => {
-    const exp = new Date(k.expires_at).toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' });
-    const expired = Date.now() > k.expires_at;
+    const exp = k.expires_at ? new Date(k.expires_at).toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' }) : '—';
+    const expired = k.expires_at && Date.now() > k.expires_at;
     let status;
     if (!k.active) status = '<span class="badge warn">pausada</span>';
     else if (expired) status = '<span class="badge bad">expirada</span>';
+    else if (k.expires_at === 0) status = '<span class="badge warn">aguardando</span>';
     else status = '<span class="badge ok">ativa</span>';
     const pauseBtn = k.active
       ? `<button class="ghost yellow" onclick="toggle('${k.key}')">pausar</button>`
