@@ -472,7 +472,7 @@
       <div class="dot"></div>
       <h1>QZZ<span>_admin</span></h1>
     </div>
-    <div class="meta">status: <b>online</b> • v1.2</div>
+    <div class="meta">status: <b>online</b> • v1.3</div>
   </div>
 
   <div class="err" id="errBox"></div>
@@ -527,11 +527,10 @@
             <button class="tab" data-dias="30" onclick="setDuracao(this)">30 dias</button>
           </div>
         </div>
-        <div class="grid">
-          <input type="number" id="qty" value="1" placeholder="quantidade" min="1" max="100">
+        <div style="margin-bottom:12px">
           <input type="text" id="note" placeholder="nota (opcional)">
         </div>
-        <button onclick="generate()">▸ Gerar</button>
+        <button onclick="generate()">▸ Gerar 1 key</button>
         <div class="output" id="output"></div>
       </div>
     </div>
@@ -669,17 +668,16 @@ async function loadStats() {
 }
 
 async function generate() {
-  const quantity = document.getElementById('qty').value;
   const note = document.getElementById('note').value;
   const r = await api('/api/admin/generate', {
     method:'POST',
-    body: JSON.stringify({ days: duracaoDias, quantity, note })
+    body: JSON.stringify({ days: duracaoDias, quantity: 1, note })
   });
   if (!r.success) return showToast(r.message || 'erro ao gerar', 'error');
   const out = document.getElementById('output');
   out.style.display = 'block';
   out.textContent = r.keys.map(k => k.key).join('\n');
-  showToast(`${r.count} key(s) gerada(s)`, 'success');
+  showToast(`key gerada`, 'success');
   if (r.keys.length === 1) navigator.clipboard.writeText(r.keys[0].key);
   refreshAll();
 }
