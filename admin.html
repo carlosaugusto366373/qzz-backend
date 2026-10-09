@@ -2,585 +2,518 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0a0000">
-<title>QZZ Admin • Gerador de Keys</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>QZZ • Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #08040a;
-    --bg-2: #0f0810;
-    --card: #14080d;
-    --card-2: #1a0a11;
-    --border: #2a1017;
-    --border-2: #3a1820;
-    --primary: #ff0044;
-    --primary-glow: #ff004466;
-    --primary-dark: #cc0033;
-    --text: #f5e8ec;
-    --text-2: #b898a5;
-    --text-3: #6a5058;
-    --success: #22dd77;
-    --warning: #ffaa22;
-    --danger: #ff3355;
-    --info: #4d9dff;
-  }
-
   * { margin:0; padding:0; box-sizing:border-box; }
 
-  body {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 24px 16px;
-    background-image:
-      radial-gradient(circle at 20% 0%, #ff004415 0%, transparent 40%),
-      radial-gradient(circle at 80% 100%, #7700ff11 0%, transparent 40%);
-    background-attachment: fixed;
-    -webkit-font-smoothing: antialiased;
+  :root {
+    --bg: #0a0a0a;
+    --panel: #111;
+    --panel-2: #161616;
+    --line: #222;
+    --line-2: #2a2a2a;
+    --txt: #d4d4d4;
+    --txt-2: #888;
+    --txt-3: #555;
+    --red: #d93025;
+    --red-2: #b02418;
+    --green: #26a65b;
+    --yellow: #c9a227;
+    --blue: #3a7bd5;
   }
 
-  .wrap {
-    max-width: 1100px;
-    margin: 0 auto;
+  html, body {
+    background: var(--bg);
+    color: var(--txt);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
   }
+
+  body {
+    padding: 20px;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .wrap { max-width: 1100px; margin: 0 auto; }
 
   /* ===== HEADER ===== */
   .header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-
-  .header .logo-mark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
-  .header .shield {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 0 30px var(--primary-glow);
-  }
-
-  h1 {
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #fff, #ff88aa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .sub {
-    color: var(--text-3);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  /* ===== ERROR BOX ===== */
-  .err {
-    background: linear-gradient(135deg, #2a0010, #1a0008);
-    border: 1px solid var(--danger);
-    color: #ffaaaa;
-    padding: 12px 16px;
-    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    padding: 14px 18px;
     margin-bottom: 16px;
-    font-size: 13px;
-    font-weight: 500;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    animation: shake 0.4s ease;
-  }
-  .err::before { content: '⚠'; font-size: 18px; }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-  }
-
-  /* ===== CARDS ===== */
-  .card {
-    background: linear-gradient(145deg, var(--card), var(--card-2));
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s ease, transform 0.3s ease;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--primary), transparent);
-    opacity: 0.4;
-  }
-
-  .card:hover { border-color: var(--border-2); }
-
-  .card-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 18px;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
   }
 
-  .card-title {
+  .brand {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
   }
 
-  .card-title .icon {
-    width: 32px;
-    height: 32px;
-    background: linear-gradient(135deg, #ff004422, #cc003311);
-    border: 1px solid var(--border-2);
-    border-radius: 10px;
+  .brand .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--red);
+    animation: blink 1.6s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .brand h1 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+  }
+
+  .brand h1 span { color: var(--txt-3); font-weight: 400; }
+
+  .header .meta {
+    color: var(--txt-3);
+    font-size: 11px;
+  }
+
+  .header .meta b { color: var(--txt-2); font-weight: 500; }
+
+  /* ===== ERRO ===== */
+  .err {
+    background: #1a0808;
+    border-left: 3px solid var(--red);
+    color: #ff9999;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    display: none;
+  }
+  .err::before { content: '[!] '; color: var(--red); font-weight: 700; }
+
+  /* ===== CARD / SECTION ===== */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    margin-bottom: 16px;
+  }
+
+  .card-head {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 15px;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .card-head .title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .card-head .title::before {
+    content: '// ';
+    color: var(--red);
+    font-weight: 400;
+  }
+
+  .card-body { padding: 16px; }
+
+  /* ===== LOGIN ===== */
+  #loginBox {
+    max-width: 380px;
+    margin: 80px auto;
+  }
+
+  #loginBox .card-body {
+    padding: 24px;
+  }
+
+  #loginBox .prompt {
+    color: var(--txt-3);
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  #loginBox .prompt::before {
+    content: '> ';
+    color: var(--green);
   }
 
   /* ===== INPUTS ===== */
-  input, select, textarea {
-    background: #0a0508;
-    border: 1.5px solid var(--border);
-    color: var(--text);
-    padding: 12px 16px;
-    border-radius: 12px;
+  input, select {
+    background: #0d0d0d;
+    border: 1px solid var(--line);
+    color: var(--txt);
+    padding: 10px 12px;
+    border-radius: 0;
     width: 100%;
     outline: none;
     font-family: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    margin-bottom: 10px;
+    font-size: 12px;
+    transition: border-color 0.15s;
+    margin-bottom: 8px;
   }
 
-  input::placeholder { color: var(--text-3); font-weight: 400; }
+  input::placeholder { color: var(--txt-3); }
 
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px #ff004415;
-    background: #100610;
+  input:focus, select:focus {
+    border-color: var(--red);
+    background: #0f0a0a;
   }
 
-  /* ===== BOTÕES ===== */
+  /* ===== BUTTONS ===== */
   button {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border: none;
+    background: var(--red);
+    border: 1px solid var(--red);
     color: #fff;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 10px 16px;
+    border-radius: 0;
     font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
     letter-spacing: 0.3px;
-    box-shadow: 0 4px 16px #ff004430;
-    white-space: nowrap;
+    text-transform: uppercase;
   }
 
-  button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px #ff004455;
-  }
-
-  button:active { transform: translateY(0); }
-
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
+  button:hover { background: var(--red-2); border-color: var(--red-2); }
+  button:active { transform: translateY(1px); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
 
   button.ghost {
     background: transparent;
-    border: 1.5px solid var(--border-2);
-    color: var(--text-2);
-    box-shadow: none;
-    padding: 8px 14px;
-    font-size: 12px;
-    font-weight: 600;
+    border: 1px solid var(--line-2);
+    color: var(--txt-2);
+    font-weight: 500;
+    text-transform: none;
+    font-size: 11px;
+    padding: 6px 10px;
   }
 
   button.ghost:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: #ff004410;
-    transform: none;
-    box-shadow: none;
+    background: var(--panel-2);
+    border-color: var(--txt-3);
+    color: var(--txt);
   }
 
-  button.ghost.success { border-color: var(--success); color: var(--success); }
-  button.ghost.success:hover { background: #22dd7715; border-color: var(--success); color: var(--success); }
+  button.ghost.green { border-color: #1e4a2e; color: #4ade80; }
+  button.ghost.green:hover { background: #0f1f15; border-color: var(--green); color: #4ade80; }
 
-  button.ghost.danger { border-color: var(--danger); color: var(--danger); }
-  button.ghost.danger:hover { background: #ff335515; border-color: var(--danger); color: var(--danger); }
+  button.ghost.yellow { border-color: #4a3d1e; color: #e5c44a; }
+  button.ghost.yellow:hover { background: #1f1a0f; border-color: var(--yellow); color: #e5c44a; }
 
-  button.ghost.warning { border-color: var(--warning); color: var(--warning); }
-  button.ghost.warning:hover { background: #ffaa2215; border-color: var(--warning); color: var(--warning); }
+  button.ghost.red { border-color: #4a1e1e; color: #ff6666; }
+  button.ghost.red:hover { background: #1f0f0f; border-color: var(--red); color: #ff6666; }
 
   /* ===== GRID ===== */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-    margin-bottom: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
   }
 
   /* ===== STATS ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
   .stat {
-    background: linear-gradient(145deg, #0d060a, #100609);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 14px;
-    text-align: center;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
     position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
   }
 
   .stat::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary), transparent);
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--red);
   }
 
-  .stat:hover { transform: translateY(-3px); border-color: var(--border-2); }
+  .stat.green::before { background: var(--green); }
+  .stat.yellow::before { background: var(--yellow); }
+  .stat.blue::before { background: var(--blue); }
 
   .stat .n {
-    font-size: 32px;
-    font-weight: 900;
+    font-size: 26px;
+    font-weight: 700;
     color: #fff;
     line-height: 1;
-    margin-bottom: 6px;
-    background: linear-gradient(135deg, #fff, var(--primary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    letter-spacing: -1px;
   }
 
   .stat .l {
     font-size: 10px;
-    color: var(--text-3);
+    color: var(--txt-3);
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    font-weight: 600;
+    margin-top: 6px;
   }
 
-  .stat.ok .n { background: linear-gradient(135deg, #fff, var(--success)); -webkit-background-clip: text; background-clip: text; }
-  .stat.ok::before { background: linear-gradient(90deg, var(--success), transparent); }
-
-  .stat.warn .n { background: linear-gradient(135deg, #fff, var(--warning)); -webkit-background-clip: text; background-clip: text; }
-  .stat.warn::before { background: linear-gradient(90deg, var(--warning), transparent); }
-
-  .stat.info .n { background: linear-gradient(135deg, #fff, var(--info)); -webkit-background-clip: text; background-clip: text; }
-  .stat.info::before { background: linear-gradient(90deg, var(--info), transparent); }
-
-  /* ===== TABELA ===== */
-  .table-wrap { overflow-x: auto; margin-top: 12px; border-radius: 12px; }
+  /* ===== TABLE ===== */
+  .table-wrap { overflow-x: auto; }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12.5px;
+    font-size: 11.5px;
   }
 
   th, td {
-    padding: 12px 10px;
+    padding: 10px 12px;
     text-align: left;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
   }
 
   th {
-    color: var(--text-3);
+    color: var(--txt-3);
     font-size: 10px;
     text-transform: uppercase;
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: 1px;
-    background: #0a0508;
-    position: sticky;
-    top: 0;
+    background: #0d0d0d;
   }
 
-  tbody tr {
-    transition: background 0.2s ease;
-  }
-
-  tbody tr:hover {
-    background: #ff004408;
-  }
-
+  tbody tr:hover { background: #141414; }
   tbody tr:last-child td { border-bottom: none; }
 
   .key-cell {
-    font-family: 'JetBrains Mono', monospace;
-    color: #ff99bb;
+    font-family: inherit;
+    color: #ff8888;
     cursor: pointer;
-    font-size: 11.5px;
-    font-weight: 600;
-    padding: 4px 8px;
-    background: #ff004410;
-    border-radius: 6px;
+    padding: 3px 6px;
+    border: 1px solid #2a1010;
+    background: #150808;
     display: inline-block;
-    transition: all 0.2s ease;
+    font-size: 11px;
+    transition: all 0.15s;
   }
 
-  .key-cell:hover {
-    background: #ff004425;
-    color: #ffbbcc;
-  }
+  .key-cell:hover { background: #200a0a; border-color: var(--red); }
 
   .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 10.5px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 500;
+    border: 1px solid;
+    letter-spacing: 0.5px;
   }
 
-  .badge.ok { background: #22dd7720; color: var(--success); border: 1px solid #22dd7740; }
-  .badge.bad { background: #ff335520; color: var(--danger); border: 1px solid #ff335540; }
-  .badge.warn { background: #ffaa2220; color: var(--warning); border: 1px solid #ffaa2240; }
+  .badge.ok { color: #4ade80; border-color: #1e4a2e; background: #0a1a10; }
+  .badge.bad { color: #ff6666; border-color: #4a1e1e; background: #1a0a0a; }
+  .badge.warn { color: #e5c44a; border-color: #4a3d1e; background: #1a150a; }
+
+  .hwid-cell {
+    font-size: 10px;
+    color: var(--txt-3);
+    font-family: inherit;
+  }
 
   .actions {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     flex-wrap: wrap;
   }
 
   .actions button {
-    padding: 6px 10px;
-    font-size: 11px;
-    border-radius: 8px;
-    font-weight: 600;
-  }
-
-  .hwid-cell {
-    font-family: 'JetBrains Mono', monospace;
+    padding: 5px 9px;
     font-size: 10px;
-    color: var(--text-3);
+    font-weight: 500;
+    border-radius: 0;
+    text-transform: none;
   }
 
   /* ===== OUTPUT ===== */
   .output {
-    background: #0a0508;
-    border: 1.5px dashed var(--primary);
-    border-radius: 12px;
-    padding: 16px;
-    margin-top: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12.5px;
+    background: #0a0a0a;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--green);
+    padding: 12px 14px;
+    margin-top: 10px;
+    font-family: inherit;
+    font-size: 11.5px;
     line-height: 1.8;
-    color: #ff99bb;
+    color: #4ade80;
     white-space: pre-wrap;
     max-height: 240px;
     overflow: auto;
     display: none;
-    animation: slideDown 0.3s ease;
   }
 
-  .output:not(:empty) { display: block; }
-
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+  .output::before {
+    content: '$ cat keys.txt';
+    display: block;
+    color: var(--txt-3);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--line-2);
+    font-size: 10px;
   }
 
   /* ===== TOAST ===== */
   .toast {
     position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: linear-gradient(135deg, var(--card-2), var(--card));
-    border: 1.5px solid var(--primary);
-    color: var(--text);
-    padding: 14px 24px;
-    border-radius: 14px;
-    font-weight: 600;
-    font-size: 13px;
-    box-shadow: 0 10px 40px #00000080, 0 0 30px #ff004430;
+    bottom: 20px;
+    left: 20px;
+    background: var(--panel);
+    border: 1px solid var(--line-2);
+    border-left: 3px solid var(--red);
+    color: var(--txt);
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 500;
     z-index: 9999;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.25s;
     pointer-events: none;
-    max-width: 90%;
-    text-align: center;
+    max-width: 320px;
   }
 
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.success { border-color: var(--success); box-shadow: 0 10px 40px #00000080, 0 0 30px #22dd7730; }
-  .toast.error { border-color: var(--danger); box-shadow: 0 10px 40px #00000080, 0 0 30px #ff335530; }
-
-  /* ===== LOGIN SCREEN ===== */
-  #loginBox {
-    max-width: 420px;
-    margin: 60px auto;
-    text-align: center;
+  .toast.show { opacity: 1; transform: translateX(0); }
+  .toast.success { border-left-color: var(--green); }
+  .toast.error { border-left-color: var(--red); }
+  .toast::before {
+    content: '> ';
+    color: var(--txt-3);
   }
 
-  #loginBox .lock-icon {
-    font-size: 48px;
-    margin-bottom: 12px;
-    filter: drop-shadow(0 0 20px var(--primary));
-  }
-
-  #loginBox h2 {
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 6px;
-    color: var(--text);
-  }
-
-  #loginBox p {
-    color: var(--text-3);
-    font-size: 13px;
-    margin-bottom: 20px;
-  }
-
-  #loginBox input {
-    text-align: center;
-    font-size: 15px;
-    letter-spacing: 1px;
-    margin-bottom: 14px;
-  }
-
-  #loginBox button {
-    width: 100%;
-    padding: 14px;
-    font-size: 14px;
-  }
-
-  /* ===== EMPTY STATE ===== */
+  /* ===== EMPTY ===== */
   .empty {
     text-align: center;
-    padding: 40px 20px;
-    color: var(--text-3);
-    font-size: 13px;
+    padding: 32px 16px;
+    color: var(--txt-3);
+    font-size: 12px;
   }
 
-  .empty .emoji { font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.5; }
+  .empty::before {
+    content: '// ';
+    color: var(--txt-3);
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center;
+    color: var(--txt-3);
+    font-size: 10px;
+    padding: 20px 0 10px;
+    letter-spacing: 1px;
+  }
+
+  .footer::before { content: '─── '; color: var(--line-2); }
+  .footer::after { content: ' ───'; color: var(--line-2); }
 
   /* ===== RESPONSIVO ===== */
   @media (max-width: 700px) {
-    body { padding: 16px 10px; }
-    h1 { font-size: 22px; }
-    .header .shield { width: 34px; height: 34px; font-size: 17px; }
-    .card { padding: 16px; border-radius: 16px; margin-bottom: 14px; }
-    .card-title { font-size: 13px; }
-    .card-title .icon { width: 28px; height: 28px; font-size: 13px; }
-    .stat .n { font-size: 24px; }
-    .stat { padding: 14px 10px; border-radius: 12px; }
-    th, td { padding: 8px 6px; font-size: 11px; }
-    .key-cell { font-size: 10px; padding: 3px 6px; }
-    .actions button { padding: 5px 8px; font-size: 10px; }
-    .badge { font-size: 9.5px; padding: 3px 8px; }
-    .output { font-size: 11px; padding: 12px; }
-    input { padding: 10px 14px; font-size: 13px; }
-    button { padding: 10px 16px; font-size: 12px; }
+    body { padding: 12px 8px; font-size: 12px; }
+    .header { padding: 10px 12px; }
+    .brand h1 { font-size: 13px; }
+    .card-head { padding: 10px 12px; }
+    .card-body { padding: 12px; }
+    .stat { padding: 10px 12px; }
+    .stat .n { font-size: 20px; }
+    .stat .l { font-size: 9px; }
+    th, td { padding: 7px 6px; font-size: 10.5px; }
+    .key-cell { font-size: 10px; padding: 2px 4px; }
+    .actions { gap: 3px; }
+    .actions button { padding: 4px 7px; font-size: 9px; }
   }
 
   @media (max-width: 400px) {
-    .actions { flex-direction: column; gap: 4px; }
-    .actions button { width: 100%; }
     .grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .actions { flex-direction: column; }
+    .actions button { width: 100%; }
   }
 
   /* ===== SCROLLBAR ===== */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: #0a0508; border-radius: 10px; }
-  ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 10px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+  ::-webkit-scrollbar-track { background: #0a0a0a; }
+  ::-webkit-scrollbar-thumb { background: #2a2a2a; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--red); }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="header">
-    <div class="logo-mark">
-      <div class="shield">⚡</div>
-      <h1>QZZ ADMIN</h1>
+    <div class="brand">
+      <div class="dot"></div>
+      <h1>QZZ<span>_admin</span></h1>
     </div>
-    <div class="sub">Gerador de Keys • Premium</div>
+    <div class="meta">status: <b>online</b> • v1.0</div>
   </div>
 
   <div class="err" id="errBox"></div>
 
-  <!-- LOGIN ADMIN -->
+  <!-- LOGIN -->
   <div class="card" id="loginBox">
-    <div class="lock-icon">🔒</div>
-    <h2>Acesso Restrito</h2>
-    <p>Digite a senha para continuar</p>
-    <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter') login()">
-    <button onclick="login()">Entrar no Painel</button>
+    <div class="card-head">
+      <div class="title">auth</div>
+    </div>
+    <div class="card-body">
+      <div class="prompt">insira a senha do administrador</div>
+      <input type="password" id="adminPass" placeholder="password..." onkeydown="if(event.key==='Enter') login()">
+      <button onclick="login()" style="width:100%">▸ Entrar</button>
+    </div>
   </div>
 
   <!-- PAINEL -->
   <div id="panel" style="display:none">
 
-    <div class="grid" id="stats"></div>
+    <div class="stats-grid" id="stats"></div>
 
     <div class="card">
       <div class="card-head">
-        <div class="card-title">
-          <div class="icon">🔑</div>
-          Gerar Keys
+        <div class="title">gerar keys</div>
+        <button class="ghost" onclick="refreshAll()">↻ atualizar</button>
+      </div>
+      <div class="card-body">
+        <div class="grid">
+          <input type="number" id="days" value="30" placeholder="dias" min="1">
+          <input type="number" id="qty" value="1" placeholder="quantidade" min="1" max="100">
+          <input type="text" id="note" placeholder="nota (opcional)">
         </div>
+        <button onclick="generate()">▸ Gerar</button>
+        <div class="output" id="output"></div>
       </div>
-      <div class="grid">
-        <input type="number" id="days" value="30" placeholder="Dias" min="1">
-        <input type="number" id="qty" value="1" placeholder="Quantidade" min="1" max="100">
-        <input type="text" id="note" placeholder="Nota (opcional)">
-      </div>
-      <button onclick="generate()">✨ Gerar Keys</button>
-      <div class="output" id="output"></div>
     </div>
 
     <div class="card">
       <div class="card-head">
-        <div class="card-title">
-          <div class="icon">📋</div>
-          Keys Cadastradas
-        </div>
-        <button class="ghost" onclick="loadKeys()">🔄 Atualizar</button>
+        <div class="title">keys</div>
+        <button class="ghost" onclick="loadKeys()">↻ atualizar</button>
       </div>
       <div class="table-wrap">
         <table>
@@ -589,7 +522,7 @@
               <th>Key</th>
               <th>Status</th>
               <th>Expira</th>
-              <th>Dispositivo</th>
+              <th>HWID</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -600,13 +533,10 @@
 
     <div class="card">
       <div class="card-head">
-        <div class="card-title">
-          <div class="icon">📜</div>
-          Logs de Atividade
-        </div>
-        <button class="ghost" onclick="loadLogs()">🔄 Atualizar</button>
+        <div class="title">logs</div>
+        <button class="ghost" onclick="loadLogs()">↻ atualizar</button>
       </div>
-      <div class="table-wrap" style="max-height:400px; overflow-y:auto;">
+      <div class="table-wrap" style="max-height:380px; overflow-y:auto;">
         <table>
           <thead>
             <tr>
@@ -621,16 +551,16 @@
       </div>
     </div>
   </div>
+
+  <div class="footer">qzz system</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== API na MESMA origem =====
 const API = window.location.origin;
 let pass = '';
 
-// ===== TOAST =====
 let toastTimer;
 function showToast(msg, type = '') {
   const el = document.getElementById('toast');
@@ -638,10 +568,9 @@ function showToast(msg, type = '') {
   el.className = 'toast ' + type;
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-// ===== API HELPER =====
 async function api(path, opts = {}) {
   try {
     const res = await fetch(API + path, {
@@ -650,7 +579,7 @@ async function api(path, opts = {}) {
     });
     return await res.json();
   } catch (e) {
-    showErr('Não foi possível conectar ao servidor.');
+    showErr('falha na conexão com o servidor');
     throw e;
   }
 }
@@ -658,156 +587,123 @@ async function api(path, opts = {}) {
 function showErr(msg) {
   const el = document.getElementById('errBox');
   el.textContent = msg;
-  el.style.display = 'flex';
-  setTimeout(() => { el.style.display = 'none'; }, 6000);
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 5000);
 }
 
-// ===== LOGIN =====
 function login() {
   pass = document.getElementById('adminPass').value;
-  if (!pass) return showToast('Digite a senha', 'error');
+  if (!pass) return showToast('digite a senha', 'error');
   api('/api/admin/stats').then(r => {
-    if (!r.success) return showToast('Senha incorreta', 'error');
+    if (!r.success) return showToast('senha incorreta', 'error');
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('panel').style.display = 'block';
-    showToast('Bem-vindo!', 'success');
+    showToast('autenticado', 'success');
     refreshAll();
   }).catch(() => {});
 }
 
 function refreshAll() { loadStats(); loadKeys(); loadLogs(); }
 
-// ===== STATS =====
 async function loadStats() {
   const r = await api('/api/admin/stats');
   if (!r.success) return;
   document.getElementById('stats').innerHTML = `
-    <div class="stat"><div class="n">${r.total}</div><div class="l">Total</div></div>
-    <div class="stat ok"><div class="n">${r.ativas}</div><div class="l">Ativas</div></div>
-    <div class="stat warn"><div class="n">${r.expiradas}</div><div class="l">Expiradas</div></div>
-    <div class="stat info"><div class="n">${r.usadas}</div><div class="l">Ativadas</div></div>
+    <div class="stat"><div class="n">${r.total}</div><div class="l">total</div></div>
+    <div class="stat green"><div class="n">${r.ativas}</div><div class="l">ativas</div></div>
+    <div class="stat yellow"><div class="n">${r.expiradas}</div><div class="l">expiradas</div></div>
+    <div class="stat blue"><div class="n">${r.usadas}</div><div class="l">ativadas</div></div>
   `;
 }
 
-// ===== GERAR =====
 async function generate() {
   const days = document.getElementById('days').value;
   const quantity = document.getElementById('qty').value;
   const note = document.getElementById('note').value;
   const r = await api('/api/admin/generate', { method:'POST', body: JSON.stringify({ days, quantity, note }) });
-  if (!r.success) return showToast(r.message || 'Erro ao gerar', 'error');
-
+  if (!r.success) return showToast(r.message || 'erro ao gerar', 'error');
   const out = document.getElementById('output');
   out.textContent = r.keys.map(k => k.key).join('\n');
-  showToast(`${r.count} key(s) gerada(s)!`, 'success');
-
-  // Copia automaticamente se for só 1
-  if (r.keys.length === 1) {
-    navigator.clipboard.writeText(r.keys[0].key);
-    showToast('Key copiada!', 'success');
-  }
-
+  showToast(`${r.count} key(s) gerada(s)`, 'success');
+  if (r.keys.length === 1) navigator.clipboard.writeText(r.keys[0].key);
   refreshAll();
 }
 
-// ===== LISTAR KEYS =====
 async function loadKeys() {
   const r = await api('/api/admin/keys');
   if (!r.success) return;
-
   const tbody = document.getElementById('keysTable');
   if (!r.keys.length) {
-    tbody.innerHTML = `<tr><td colspan="5" class="empty"><span class="emoji">🔑</span>Nenhuma key cadastrada ainda</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">nenhuma key cadastrada</td></tr>`;
     return;
   }
-
   tbody.innerHTML = r.keys.map(k => {
-    const exp = new Date(k.expires_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    const exp = new Date(k.expires_at).toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' });
     const expired = Date.now() > k.expires_at;
-
     let status;
-    if (!k.active) status = '<span class="badge warn">⏸ Pausada</span>';
-    else if (expired) status = '<span class="badge bad">⏰ Expirada</span>';
-    else status = '<span class="badge ok">● Ativa</span>';
-
+    if (!k.active) status = '<span class="badge warn">pausada</span>';
+    else if (expired) status = '<span class="badge bad">expirada</span>';
+    else status = '<span class="badge ok">ativa</span>';
     const pauseBtn = k.active
-      ? `<button class="ghost warning" onclick="toggle('${k.key}')" title="Pausar">⏸ Pausar</button>`
-      : `<button class="ghost success" onclick="toggle('${k.key}')" title="Reativar">▶ Reativar</button>`;
-
+      ? `<button class="ghost yellow" onclick="toggle('${k.key}')">pausar</button>`
+      : `<button class="ghost green" onclick="toggle('${k.key}')">reativar</button>`;
     return `<tr>
-      <td><span class="key-cell" onclick="copy('${k.key}')" title="Clique para copiar">${k.key}</span></td>
+      <td><span class="key-cell" onclick="copy('${k.key}')">${k.key}</span></td>
       <td>${status}</td>
-      <td style="color:var(--text-2);font-size:11px;font-weight:500">${exp}</td>
-      <td class="hwid-cell">${k.hwid ? k.hwid.slice(0, 10) + '…' : '—'}</td>
+      <td style="color:var(--txt-2);font-size:10.5px">${exp}</td>
+      <td class="hwid-cell">${k.hwid ? k.hwid.slice(0,10)+'…' : '—'}</td>
       <td>
         <div class="actions">
           ${pauseBtn}
-          <button class="ghost" onclick="resetHwid('${k.key}')" title="Liberar dispositivo">🔄</button>
-          <button class="ghost danger" onclick="del('${k.key}')" title="Deletar">🗑</button>
+          <button class="ghost" onclick="resetHwid('${k.key}')">reset</button>
+          <button class="ghost red" onclick="del('${k.key}')">del</button>
         </div>
       </td>
     </tr>`;
   }).join('');
 }
 
-// ===== LISTAR LOGS =====
 async function loadLogs() {
   const r = await api('/api/admin/logs');
   if (!r.success) return;
-
   const tbody = document.getElementById('logsTable');
   if (!r.logs.length) {
-    tbody.innerHTML = `<tr><td colspan="4" class="empty"><span class="emoji">📜</span>Nenhuma atividade registrada</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" class="empty">nenhuma atividade</td></tr>`;
     return;
   }
-
-  const actionMap = {
-    'login_ok': '✅ Login OK',
-    'login_fail': '❌ Falha',
-    'activate': '🎯 Ativada',
-    'generated': '✨ Gerada',
-    'reactivated': '▶ Reativada',
-    'deactivated': '⏸ Pausada',
-    'hwid_reset': '🔄 HWID Reset',
-    'deleted': '🗑 Deletada'
-  };
-
   tbody.innerHTML = r.logs.map(l => `
     <tr>
-      <td style="color:var(--text-3);font-size:10.5px">${new Date(l.created_at).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })}</td>
+      <td style="color:var(--txt-3);font-size:10px">${new Date(l.created_at).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })}</td>
       <td><span class="key-cell" style="font-size:10px">${l.key||'—'}</span></td>
-      <td style="font-size:11px;font-weight:600">${actionMap[l.action] || l.action}</td>
-      <td style="color:var(--text-3);font-size:10.5px">${l.detail||''}</td>
+      <td style="font-size:10.5px">${l.action}</td>
+      <td style="color:var(--txt-3);font-size:10px">${l.detail||''}</td>
     </tr>
   `).join('');
 }
 
-// ===== AÇÕES =====
 async function toggle(key) {
   const r = await api('/api/admin/toggle', { method:'POST', body: JSON.stringify({ key }) });
-  if (r.success) showToast(r.active ? '▶ Key reativada!' : '⏸ Key pausada!', 'success');
-  loadKeys();
-  loadStats();
+  if (r.success) showToast(r.active ? 'key reativada' : 'key pausada', 'success');
+  loadKeys(); loadStats();
 }
 
 async function resetHwid(key) {
-  if (!confirm('Resetar o HWID desta key?\n\nO cliente poderá logar em outro aparelho.')) return;
+  if (!confirm('resetar hwid desta key?')) return;
   const r = await api('/api/admin/reset-hwid', { method:'POST', body: JSON.stringify({ key }) });
-  if (r.success) showToast('🔄 HWID resetado!', 'success');
+  if (r.success) showToast('hwid resetado', 'success');
   loadKeys();
 }
 
 async function del(key) {
-  if (!confirm('Deletar esta key PERMANENTEMENTE?\n\nEsta ação não pode ser desfeita.')) return;
+  if (!confirm('deletar esta key permanentemente?')) return;
   const r = await api('/api/admin/delete', { method:'POST', body: JSON.stringify({ key }) });
-  if (r.success) showToast('🗑 Key deletada!', 'success');
-  loadKeys();
-  loadStats();
+  if (r.success) showToast('key deletada', 'success');
+  loadKeys(); loadStats();
 }
 
 function copy(t) {
   navigator.clipboard.writeText(t);
-  showToast('📋 Copiado!', 'success');
+  showToast('copiado', 'success');
 }
 </script>
 </body>
