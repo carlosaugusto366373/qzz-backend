@@ -35,10 +35,24 @@ function authAdmin(req, res, next) {
   next();
 }
 
+// ===== HELPER: converte periodo em timestamp inicial =====
+function getInicio(periodo) {
+  const agora = Date.now();
+  const ms = {
+    '1h':  60 * 60 * 1000,
+    '1d':  24 * 60 * 60 * 1000,
+    '7d':  7 * 24 * 60 * 60 * 1000,
+    '30d': 30 * 24 * 60 * 60 * 1000,
+  };
+  if (periodo === 'all' || !ms[periodo]) return 0; // 0 = sem filtro
+  return agora - ms[periodo];
+}
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
+// ===== AUTH =====
 app.post('/api/auth/login', (req, res) => {
   const { key, hwid } = req.body;
   const ip = req.ip;
@@ -110,6 +124,7 @@ app.get('/api/auth/session', (req, res) => {
   }
 });
 
+// ===== ADMIN =====
 app.post('/api/admin/generate', authAdmin, (req, res) => {
   const { days = 30, quantity = 1, note = '' } = req.body;
   const d = Math.max(1, parseInt(days) || 30);
@@ -163,17 +178,41 @@ app.post('/api/admin/delete', authAdmin, (req, res) => {
   res.json({ success: true });
 });
 
+// ===== LOGS COM FILTRO DE PERÍODO =====
 app.get('/api/admin/logs', authAdmin, (req, res) => {
-  const rows = db.prepare(`SELECT * FROM logs ORDER BY created_at DESC LIMIT 200`).all();
+  const periodo = req.query.periodo || '1h';
+  const inicio = getInicio(periodo);
+
+  let rows;
+  if (inicio === 0) {
+    rows = db.prepare(`SELECT * FROM logs ORDER BY created_at DESC LIMIT 500`).all();
+  } else {
+    rows = db.prepare(`SELECT * FROM logs WHERE created_at >= ? ORDER BY created_at DESC LIMIT 500`).all(inicio);
+  }
+
   res.json({ success: true, logs: rows });
 });
 
+// ===== STATS COM FILTRO DE PERÍODO =====
 app.get('/api/admin/stats', authAdmin, (req, res) => {
+  const periodo = req.query.periodo || '1h';
+  const agora = Date.now();
+  const inicio = getInicio(periodo);
+
+  // globais (não filtram por período)
   const total = db.prepare(`SELECT COUNT(*) as c FROM keys`).get().c;
-  const ativas = db.prepare(`SELECT COUNT(*) as c FROM keys WHERE active = 1 AND expires_at > ?`).get(Date.now()).c;
-  const expiradas = db.prepare(`SELECT COUNT(*) as c FROM keys WHERE expires_at > 0 AND expires_at <= ?`).get(Date.now()).c;
-  const usadas = db.prepare(`SELECT COUNT(*) as c FROM keys WHERE hwid IS NOT NULL`).get().c;
+  const ativas = db.prepare(`SELECT COUNT(*) as c FROM keys WHERE active = 1 AND expires_at > ?`).get(agora).c;
+  const expiradas = db.prepare(`SELECT COUNT(*) as c FROM keys WHERE expires_at > 0 AND expires_at <= ?`).get(agora).c;
   const aguardando = db.prepare(`SELECT COUNT(*) as c FROM keys WHERE expires_at = 0`).get().c;
+
+  // filtradas por período
+  let usadas;
+  if (inicio === 0) {
+    usadas = db.prepare(`SELECT COUNT(*) as c FROM keys WHERE hwid IS NOT NULL`).get().c;
+  } else {
+    usadas = db.prepare(`SELECT COUNT(*) as c FROM keys WHERE hwid IS NOT NULL AND activated_at >= ?`).get(inicio).c;
+  }
+
   res.json({ success: true, total, ativas, expiradas, usadas, aguardando });
 });
 
