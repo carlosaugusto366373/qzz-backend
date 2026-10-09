@@ -72,7 +72,7 @@ app.post('/api/auth/login', (req, res) => {
   }
 
   if (row.expires_at === 0) {
-    const expiresAt = Date.now() + (row.duration_days * 86400000);
+    const expiresAt = Date.now() + Math.round(row.duration_days * 86400000);
     db.prepare(`UPDATE keys SET expires_at = ? WHERE id = ?`).run(expiresAt, row.id);
     row.expires_at = expiresAt;
     log(key, 'first_activation', `Ativada — válida por ${row.duration_days} dias`, ip);
@@ -127,7 +127,7 @@ app.get('/api/auth/session', (req, res) => {
 // ===== ADMIN =====
 app.post('/api/admin/generate', authAdmin, (req, res) => {
   const { days = 30, quantity = 1, note = '' } = req.body;
-  const d = Math.max(1, parseInt(days) || 30);
+  const d = Math.max(0.01, parseFloat(days) || 30); // aceita 0.0417 (1h)
   const q = Math.min(100, Math.max(1, parseInt(quantity) || 1));
 
   const created = [];
